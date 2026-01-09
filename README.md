@@ -14,7 +14,8 @@ Two APB-based UART instances are verified in a back-to-back configuration to sup
 - UART1.TX connected to UART2.RX and UART2.TX connected to UART1.RX
 - Independent configuration of baud rate and frame format
 - Standard UART16550 register map
-- 
+
+  
 ![Verification Plan](docs/Vplan.png)
 ---
 
