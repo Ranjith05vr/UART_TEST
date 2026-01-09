@@ -1,68 +1,34 @@
-# APB-UART (UART16550) Functional Verification using UVM RAL
+# APB-UART (UART16550) Functional Verification using UVM
 
 ## Project Overview
-This repository contains a **UVM-based functional verification environment** for an **AMBA APB–connected UART (UART16550-compatible) IP core**, with a **register-centric verification strategy built using the UVM Register Abstraction Layer (RAL)**.
+This repository contains a **UVM-based functional verification environment** for an **AMBA APB–connected UART (UART16550-compatible) IP core**.  
+The project verifies UART data transfer, register programming, interrupt behavior, and error handling using a **self-checking UVM testbench**.
 
-The project verifies **UART register programming, data transfer, interrupt handling, and error reporting** using **RAL-driven stimulus, RAL-mirrored checking, and extensive backdoor register access**.  
-Two APB-based UART instances are verified in a back-to-back configuration to support **full-duplex, half-duplex, and loopback modes**.
+Two APB-based UART instances are verified in a back-to-back configuration to support **full-duplex, half-duplex, and loopback operation**.
 
 ---
-
 
 ## Design Under Test (DUT)
 - Two UART16550-compatible instances: **UART1 and UART2**
-- Each UART acts as an **APB slave**
+- Each UART operates as an **APB slave**
 - UART1.TX connected to UART2.RX and UART2.TX connected to UART1.RX
-- Independent baud-rate and frame-format configuration
-- Complete UART16550-style register map implementation
+- Independent configuration of baud rate and frame format
+- Standard UART16550 register map
 - 
-## Verification plan:
-![UART TX/RX Waveform](docs/Vplan.png)
----
-
-## Verification Focus: UVM RAL with Backdoor Access
-The verification environment is **fully driven by a UVM RAL model**, which serves as the **single source of truth** for all UART register behavior.
-
-### RAL Model Coverage
-The RAL model represents the complete UART register map, including:
-- RBR / THR – Receive / Transmit data
-- IER – Interrupt Enable Register
-- IIR – Interrupt Identification Register
-- FCR – FIFO Control Register
-- LCR – Line Control Register
-- MCR – Modem Control Register
-- LSR – Line Status Register
-- DLL / DLH – Baud-rate divisor registers
-
----
-
-## Role of Backdoor Access
-Backdoor access is used extensively to **improve accuracy, performance, and observability** during verification:
-
-- Direct backdoor reads of UART registers for **cycle-accurate validation**
-- Scoreboard compares monitored APB transactions against **RAL backdoor values**
-- Enables precise checking of:
-  - Status flags (LSR)
-  - Interrupt causes (IIR)
-  - Control register updates (LCR, MCR, FCR)
-- Allows validation of internal DUT state **without perturbing bus activity**
-- Accelerates test execution by avoiding unnecessary frontdoor APB reads
-
-The combination of **RAL mirroring and backdoor access** ensures strong correlation between **expected register state and actual DUT behavior**.
-
+![Verification Plan](docs/Vplan.png)
 ---
 
 ## Verification Scope
-The following functionality is verified using **RAL-driven sequences and backdoor checking**:
+The verification environment covers:
 
-- APB register read/write correctness
-- UART transmit and receive paths
-- Baud-rate configuration via DLL/DLH
-- Frame format programming via LCR
-- Interrupt enable, generation, and clearing via IER/IIR
-- FIFO and modem control via FCR/MCR
-- Status reporting and error flags via LSR
-- Error detection:
+- APB register read/write operations
+- UART transmit and receive functionality
+- Full-duplex communication
+- Half-duplex communication
+- Loopback mode
+- Interrupt generation and handling
+- Status register updates (LSR, IIR, MSR)
+- UART error detection:
   - Parity error
   - Framing error
   - Overrun error
@@ -71,29 +37,52 @@ The following functionality is verified using **RAL-driven sequences and backdoo
 ---
 
 ## Testbench Architecture
-The verification environment follows a **modular UVM architecture tightly integrated with RAL**:
+The testbench follows a **layered UVM architecture**:
 
-- Test layer configures UART behavior exclusively through RAL APIs
+- Test configures and runs verification scenarios
 - Environment instantiates:
   - Two symmetric APB-UART UVM agents
-  - Virtual sequencer coordinating cross-UART scenarios
-  - Central RAL-aware scoreboard
-- Each agent contains:
+  - Virtual sequencer for coordinated operation
+  - Central scoreboard
+- Each agent includes:
+  - Sequencer
   - APB driver
   - APB monitor
-  - Sequencer
-- Monitors publish APB transactions via analysis ports
-- Scoreboard validates:
-  - UART data integrity
-  - Interrupt behavior
-  - Register state using RAL mirrors and backdoor reads
+- Monitors publish observed transactions to the scoreboard for checking
+
+![UVM Testbench Architecture](docs/TB_Arch.png)
 
 ---
 
-## Testbench Architecture Diagram
-![UVM RAL-Based Testbench Architecture](docs/TB_Arch.png)
+## RAL-Based Scoreboard
+- The scoreboard integrates a **UVM RAL model** representing the UART register map
+- Register values observed on the APB interface are compared against **RAL-mirrored values**
+- **Backdoor register reads** are used for status and interrupt validation where required
+- Data integrity is verified across UART transmit and receive paths
 
-## Waveform
+---
+
+## Test Scenarios
+- UART transmit and receive tests
+- Full-duplex data transfer between UART1 and UART2
+- Half-duplex operation
+- Loopback mode verification
+- Interrupt generation and clearing
+- UART error condition validation
+
+---
+
+## Sample Waveforms
 ![UART TX/RX Waveform](docs/wave.png)
+
+---
+
+## Functional Coverage
+- Register configuration coverage
+- Interrupt type coverage
+- Error condition coverage
+- Mode coverage (full-duplex, half-duplex, loopback)
+
+![Functional Coverage Report](docs/COV_REP.png)
 
 
