@@ -7,6 +7,8 @@ The project verifies **UART register programming, data transfer, interrupt handl
 Two APB-based UART instances are verified in a back-to-back configuration to support **full-duplex, half-duplex, and loopback modes**.
 
 ---
+## Verification plan:
+![UART TX/RX Waveform](docs/Vplan.png)
 
 ## Design Under Test (DUT)
 - Two UART16550-compatible instances: **UART1 and UART2**
@@ -88,6 +90,9 @@ The verification environment follows a **modular UVM architecture tightly integr
 ---
 
 ## Testbench Architecture Diagram
-Add image here:
 ![UVM RAL-Based Testbench Architecture](docs/TB_Arch.png)
+
+## Waveform
+![UART TX/RX Waveform](docs/wave.png)
+
 
