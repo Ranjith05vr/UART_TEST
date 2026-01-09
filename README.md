@@ -89,5 +89,5 @@ The verification environment follows a **modular UVM architecture tightly integr
 
 ## Testbench Architecture Diagram
 Add image here:
-![UVM RAL-Based Testbench Architecture](UART_TEST/TB Arch.png)
+![UVM RAL-Based Testbench Architecture](TB Arch.png)
 
